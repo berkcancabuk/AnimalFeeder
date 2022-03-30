@@ -20,4 +20,19 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/BerkcanAssets/Scenes/Level5.unity
     guid: 2e25fcaba3f2db74ebcd61d1d12d5d25
+  - enabled: 1
+    path: Assets/BerkcanAssets/Scenes/Level6.unity
+    guid: 5784ed2a2f84bc34f8caf8b0b111ec0a
+  - enabled: 1
+    path: Assets/BerkcanAssets/Scenes/Level7.unity
+    guid: 33d653e5aaefc034787b93a177324796
+  - enabled: 1
+    path: Assets/BerkcanAssets/Scenes/Level8.unity
+    guid: 62b05f2b46c2b2849bcf549d261ec42a
+  - enabled: 1
+    path: Assets/BerkcanAssets/Scenes/Level9.unity
+    guid: 27bbba6854dc07f45a213c38359337d5
+  - enabled: 1
+    path: Assets/BerkcanAssets/Scenes/Level10.unity
+    guid: ebb18b2861991e84eb087c0afd491683
   m_configObjects: {}

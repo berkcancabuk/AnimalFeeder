@@ -41,7 +41,6 @@ public class DynamicJoystick : Joystick
         if (magnitude > moveThreshold)
         {
             Vector2 difference = normalised * (magnitude - moveThreshold) * radius;
-            print("giriyor");
             //background.anchoredPosition += difference;
         }
         base.HandleInput(magnitude, normalised, radius, cam);

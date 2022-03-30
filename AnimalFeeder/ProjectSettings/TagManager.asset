@@ -13,6 +13,18 @@ TagManager:
   - SheepFood
   - BeetRoot
   - GoatFeed
+  - Pepper1
+  - Pepper2
+  - LeftBox
+  - RightBox
+  - LeftBoxLevel7
+  - RightBoxLevel7
+  - RightBoxLevel8
+  - LeftBoxLevel8
+  - RightBoxLevel9
+  - LeftBoxLevel9
+  - RightBoxLevel10
+  - LeftBoxLevel10
   layers:
   - Default
   - TransparentFX

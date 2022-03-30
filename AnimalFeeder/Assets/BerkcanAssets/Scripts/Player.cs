@@ -6,15 +6,16 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
+    [SerializeField] public DeerScript deer;
     [SerializeField] public GameManager game_manager;
     [SerializeField] public UImanager UI_manager;
     //[SerializeField] GameObject trueTick,CowTick;
-    [SerializeField] public int LevelValue=1;
+    [SerializeField] public static int LevelValue=1;
     public DynamicJoystick dynamicJoystick;
     [SerializeField] Rigidbody rb;
     [SerializeField] float speed = 0;
     [SerializeField] float turnspeed = 0;
-    [SerializeField] public Animator playerAnim;
+    [SerializeField] public static Animator playerAnim;
     //[SerializeField] Animator CowAnim;
     //[SerializeField] GameObject CMvcam1;
     //[SerializeField] GameObject CMCowCam;
@@ -31,11 +32,13 @@ public class Player : MonoBehaviour
 
     //karakterin birdHouse dönüþüm objeleri
     [SerializeField] GameObject BirdHouse,playerEffect,coverrals,stickman, playerEffect2;
-    [SerializeField] public GameObject plantOnHandPlantPlayer, plantOnHandRaddishPlayer, plantOnHandBeetRootPlayer;
+    [SerializeField]
+    public GameObject plantOnHandPlantPlayer, plantOnHandRaddishPlayer, plantOnHandBeetRootPlayer,
+        plantOnHandPepperPlayer, plantOnHandLemonPlayer, plantOnHandTomatoPlayer, plantOnHandGreenPlayer;
+
     // Start is called before the first frame update
     void Start()
     {
-
 
         //LevelValue = PlayerPrefs.GetInt("SavedScene");
         //SceneManager.LoadScene(LevelValue);
@@ -144,22 +147,23 @@ public class Player : MonoBehaviour
         Vector3 direction = Vector3.forward * vertical + Vector3.right * horizontal;
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), turnspeed * Time.deltaTime);
     }
-    public bool isRun = true;
+    public static bool isRun = true;
     public bool isTouchActive = true;
+    public bool didItPullAfterTheFirstTouch = false;
     public void touchCont()
     {
         if (isTouchActive)
         {
-            this.gameObject.GetComponent<BoxCollider>().enabled = true;
-            if (isBird==true)
-            {
-                StartCoroutine(BirdToHuman());
-                isBird = false;
-
-            }
+            //this.gameObject.GetComponent<BoxCollider>().enabled = true;
+            
             if (Input.touchCount > 0)
             {
-                
+                if (isBird == true)
+                {
+                    StartCoroutine(BirdToHuman());
+                    isBird = false;
+
+                }
 
 
                 if (isCamPosForward)
@@ -187,7 +191,11 @@ public class Player : MonoBehaviour
                 }
                 else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary))
                 {
-                   
+                    didItPullAfterTheFirstTouch = true;
+                    playerEffect.SetActive(false);
+                    playerEffect2.SetActive(false);
+                    isDead = true;
+                    //this.gameObject.GetComponent<Rigidbody>().useGravity = true;
                     playerAnim.SetBool("Idle", false);
                     if (isRun == true)
                     {
@@ -201,6 +209,8 @@ public class Player : MonoBehaviour
                 }
                 else if (t.phase == TouchPhase.Ended)
                 {
+                    
+                    isDead = false;
                     playerAnim.SetBool("Idle", true);
                     playerAnim.SetBool("Run", false);
                     playerAnim.SetBool("RunDrop", false);
@@ -208,12 +218,19 @@ public class Player : MonoBehaviour
             }
             else
             {
-                if (isCoowFoodDrop == true && isBird == false)
+                
+                if (didItPullAfterTheFirstTouch == true)
                 {
-                    this.gameObject.GetComponent<BoxCollider>().enabled = false;
-                    StartCoroutine(BirdFoxTrans());
+                    if (isBird == false)
+                    {
+                        isDead = false;
+                        //this.gameObject.GetComponent<Rigidbody>().useGravity = false;
+                        //this.gameObject.GetComponent<BoxCollider>().enabled = false;
+                        StartCoroutine(BirdFoxTrans());
 
+                    }
                 }
+                
                 playerAnim.SetBool("Idle", true);
                 playerAnim.SetBool("Run", false);
                 playerAnim.SetBool("RunDrop", false);
@@ -241,15 +258,19 @@ public class Player : MonoBehaviour
         stickman.SetActive(true);
         BirdHouse.SetActive(false);
     }
-   public bool isCoowFoodDrop = false;
+    public static bool isPepper1 = false;
+    public static bool isPepper2 = false;
+    public bool isDead = false;
+    public bool OneMoreLoop = false;
+    public bool OneMoreLoopForTwoAnimals = false;
     private void OnTriggerEnter(Collider other)
     {
+        print(other.name+"collider çarptýðý objeler");
         if (other.tag == "CowFood")
         {
-            isCoowFoodDrop = true;
             game_manager.plant.SetActive(false);
             game_manager.trueTick.SetActive(true);
-            if (LevelValue ==1 || LevelValue == 2 || LevelValue == 3)
+            if (LevelValue == 1 || LevelValue == 2 || LevelValue == 3)
             {
                 plantOnHandPlantPlayer.SetActive(true);
             }
@@ -261,6 +282,10 @@ public class Player : MonoBehaviour
             {
                 plantOnHandBeetRootPlayer.SetActive(true);
             }
+            else if (LevelValue == 10)
+            {
+                plantOnHandPepperPlayer.SetActive(true);
+            }
             playerAnim.SetBool("Idle", false);
             playerAnim.SetBool("Run", false);
             playerAnim.SetBool("RunDrop", true);
@@ -268,36 +293,118 @@ public class Player : MonoBehaviour
             //CMvcam1.transform.DOMove(new Vector3(CMvcam1.transform.position.x, CMvcam1.transform.position.y, -11.35f), 10f);
             isRun = false;
         }
-        if (plantOnHandPlantPlayer.gameObject.activeSelf == true || plantOnHandRaddishPlayer.gameObject.activeSelf == true || plantOnHandBeetRootPlayer.gameObject.activeSelf == true)
+        if (other.tag == "LeftBox" || other.tag == "RightBox")
+        {
+            plantOnHandPepperPlayer.SetActive(true);
+            game_manager.TakeObjectEffect.SetActive(true);
+        }
+        if (other.tag == "LeftBoxLevel7")
+        {
+            plantOnHandLemonPlayer.SetActive(true);
+            game_manager.TakeObjectEffect.SetActive(true);
+        }
+        if (other.tag == "RightBoxLevel7")
+        {
+            plantOnHandTomatoPlayer.SetActive(true);
+            game_manager.TakeObjectEffect.SetActive(true);
+        }
+        if (other.tag == "LeftBoxLevel8")
+        {
+            plantOnHandGreenPlayer.SetActive(true);
+            game_manager.TakeObjectEffect.SetActive(true);
+        }
+        if (other.tag == "RightBoxLevel8")
+        {
+            plantOnHandRaddishPlayer.SetActive(true);
+            game_manager.TakeObjectEffect.SetActive(true);
+        }
+
+        if (other.tag == "LeftBoxLevel9")
+        {
+            plantOnHandPlantPlayer.SetActive(true);
+            game_manager.TakeObjectEffect.SetActive(true);
+        }
+        if (other.tag == "RightBoxLevel9")
+        {
+            plantOnHandRaddishPlayer.SetActive(true);
+            game_manager.TakeObjectEffect.SetActive(true);
+        }
+        
+        if (plantOnHandPlantPlayer.gameObject.activeSelf == true || plantOnHandRaddishPlayer.gameObject.activeSelf == true || plantOnHandBeetRootPlayer.gameObject.activeSelf == true || plantOnHandPepperPlayer.gameObject.activeSelf == true || plantOnHandTomatoPlayer.gameObject.activeSelf == true|| plantOnHandLemonPlayer.gameObject.activeSelf == true || plantOnHandGreenPlayer.gameObject.activeSelf == true)
         {
             if (other.tag == "CowFeed")
             {
                 //transform.DOLocalMove(new Vector3(-1.1754f, -1.203f, -24.611f), 2f);
-                isTouchActive = false;
-
-
-                StartCoroutine(game_manager.EffectCow());
+                if (OneMoreLoop == false)
+                {
+                    isTouchActive = false;
+                    StartCoroutine(game_manager.EffectCow());
+                    OneMoreLoop = true;
+                }
 
             }
             if (other.tag == "CowFeed2")
             {
-                isTouchActive = false;
-                StartCoroutine(game_manager.EffectCow());
+                if (OneMoreLoop == false)
+                {
+                    isTouchActive = false;
+                    StartCoroutine(game_manager.EffectCow());
+                    OneMoreLoop = true;
+                }
             }
             if (other.tag == "SheepFeed")
             {
-                isTouchActive = false;
-                StartCoroutine(game_manager.EffectCow());
+                if (OneMoreLoop == false)
+                {
+                    isTouchActive = false;
+                    StartCoroutine(game_manager.EffectCow());
+                    OneMoreLoop = true;
+                }
             }
             if (other.tag == "GoatFeed")
             {
-                isTouchActive = false;
-                StartCoroutine(game_manager.EffectCow());
+                if (OneMoreLoop == false)
+                {
+                    isTouchActive = false;
+                    StartCoroutine(game_manager.EffectCow());
+                    OneMoreLoop = true;
+                }
             }
+            if (other.tag == "Pepper1" && isPepper1 == false && RightAnimal.RightAnimalFood == true)
+            {
+                if (OneMoreLoopForTwoAnimals == false)
+                {
+                    didItPullAfterTheFirstTouch = false;
+                    print("girdi pepper");
+                    isTouchActive = false;
+
+                    StartCoroutine(game_manager.EffectCow2());
+                    RightAnimal.isPepper = false;
+                    isPepper1 = true;
+                    OneMoreLoopForTwoAnimals = true;
+                }
+
+
+            }
+            if (other.tag == "Pepper2" && isPepper2 == false && LeftAnimal.LeftAnimalFood == true)
+            {
+                if (OneMoreLoop == false)
+                {
+                    didItPullAfterTheFirstTouch = false;
+                    print("girdi2 pepper");
+                    isPepper2 = true;
+                    isTouchActive = false;
+                    StartCoroutine(game_manager.EffectCow());
+                    RightAnimal.isPepper = false;
+                    OneMoreLoop = true;
+                }
+
+            }
+
         }
 
 
-        if (other.tag == "Fish")
+        if (other.tag == "Fish" && isDead == true)
         {
             game_manager.fishHead.GetComponent<SpriteRenderer>().color = Color.red;
             playerAnim.SetBool("Idle", true);
@@ -307,11 +414,24 @@ public class Player : MonoBehaviour
             UI_manager.taptorestart.SetActive(true);
             isTouchActive = false;
         }
-        if (other.tag == "Deer")
+        if (other.tag == "Deer" && isDead == true)
         {
-            DeerScript.deerAnim.SetBool("fail", true);
-            DeerScript.deerAnim.SetBool("FailEnd", true);
+            game_manager.fishHead.GetComponent<SpriteRenderer>().color = Color.red;
+            deer.deerAnim.SetBool("Fail", true);
+            playerAnim.SetBool("Idle", true);
+            playerAnim.SetBool("Run", false);
+            playerAnim.SetBool("RunDrop", false);
+            UI_manager.failLevel.SetActive(true);
+            deer.TryAgain = true;
+            deer.StopAllCoroutines();
+            UI_manager.taptorestart.SetActive(true);
+            isTouchActive = false;
         }
+    }
+    public void CheckDeer()
+    {
+        GameObject deerChecks = GameObject.Find("deer");
+        deer = deerChecks.GetComponent<DeerScript>();
     }
 
     //public void TryButton()

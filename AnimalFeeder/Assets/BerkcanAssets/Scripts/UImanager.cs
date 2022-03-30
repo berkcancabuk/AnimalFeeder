@@ -46,7 +46,17 @@ public class UImanager : MonoBehaviour
         player.game_manager.CMvcam1.SetActive(true);
         player.game_manager.CMCowCam.SetActive(false);
         failLevel.SetActive(false);
+        player.isDead = false;
+        player.OneMoreLoop = false;
+        player.OneMoreLoopForTwoAnimals = false;
+        Player.isPepper1 = false;
+        Player.isPepper2 = false;
+        Player.isRun = true;
+        RightAnimal.isPepper = false;
+        RightAnimal.RightAnimalFood = false;
+        LeftAnimal.LeftAnimalFood = false;
         taptorestart.SetActive(false);
+        player.didItPullAfterTheFirstTouch = false;
         player.isTouchActive = true;
         //player.isNextLevel = true;
         LevelComplate.SetActive(false);
@@ -55,42 +65,65 @@ public class UImanager : MonoBehaviour
         basket.SetActive(false);
         player.UI_manager.failLevel.SetActive(false);
         player.UI_manager.taptorestart.SetActive(false);
-        if (player.LevelValue ==1)
+        if (Player.LevelValue ==1 || Player.LevelValue == 8)
         {
             player.transform.localPosition = new Vector3(0, -1.276707f, -23.05456f);
         }
-        if (player.LevelValue == 2)
+        if (Player.LevelValue == 2 || Player.LevelValue == 3 || Player.LevelValue == 4 || Player.LevelValue == 5 || Player.LevelValue == 6 || Player.LevelValue == 7 || Player.LevelValue == 9)
         {
             player.transform.localPosition = new Vector3(0.4446331f, -2.697414f, -46.97912f);
         }
-        player.playerAnim.SetBool("Idle", true); player.playerAnim.SetBool("Run", false); player.playerAnim.SetBool("RunDrop", false);
-        player.plantOnHandPlantPlayer.SetActive(false); player.isRun = true;player.plantOnHandRaddishPlayer.SetActive(false);player.plantOnHandBeetRootPlayer.SetActive(false);
-        player.isCoowFoodDrop = false;
+        if (Player.LevelValue == 8)
+        {
+            player.transform.localPosition = new Vector3(-0.223274f, -1.487283f, -23.50282f);
+        }
+        Player.playerAnim.SetBool("Idle", true); Player.playerAnim.SetBool("Run", false); Player.playerAnim.SetBool("RunDrop", false);
+        player.plantOnHandPlantPlayer.SetActive(false); Player.isRun = true;player.plantOnHandRaddishPlayer.SetActive(false); 
+        player.plantOnHandBeetRootPlayer.SetActive(false); player.plantOnHandTomatoPlayer.SetActive(false);player.plantOnHandLemonPlayer.SetActive(false);
+
+
     }
     public void NextLevelButton()
     {
-        player.LevelValue++;
-        SceneManager.LoadScene(player.LevelValue-1);
-        ActiveSceneValue = player.LevelValue;
-        PlayerPrefs.SetInt("SavedScene", player.LevelValue);
-        print(SceneManager.GetActiveScene().buildIndex);
+        Player.LevelValue++;
+        SceneManager.LoadScene(Player.LevelValue-1);
+        ActiveSceneValue = Player.LevelValue;
+        PlayerPrefs.SetInt("SavedScene", Player.LevelValue);
+        print(Player.LevelValue +"level value");
         TextlevelValue.text = "" + ActiveSceneValue;
         StartCoroutine(checkGameManagers());
         player.game_manager.CMvcam1.SetActive(true);
         player.game_manager.CMCowCam.SetActive(false);
+        player.isDead = false;
+        player.OneMoreLoop = false;
+        player.OneMoreLoopForTwoAnimals = false;
+        player.didItPullAfterTheFirstTouch = false;
+        Player.isPepper1 = false;
+        Player.isPepper2 = false;
+        Player.isRun = true;
+        RightAnimal.isPepper = false;
+        RightAnimal.RightAnimalFood = false;
+        LeftAnimal.LeftAnimalFood = false;
         LevelComplate.SetActive(false);
         TapToContinue.SetActive(false);
         soil.SetActive(false);
         basket.SetActive(false);
-        player.transform.position = new Vector3(0, -1.276707f, -23.05456f);
-        player.playerAnim.SetBool("Idle", true); player.playerAnim.SetBool("Run", false); player.playerAnim.SetBool("RunDrop", false); player.playerAnim.SetBool("StandToSit", false);
+        if (Player.LevelValue != 8)
+        {
+            player.transform.position = new Vector3(0, -1.276707f, -23.05456f);
+        }
+        else if (Player.LevelValue == 8)
+        {
+            player.transform.localPosition = new Vector3(-0.223274f, -1.487283f, -23.50282f);
+        }
+        Player.playerAnim.SetBool("Idle", true); Player.playerAnim.SetBool("Run", false); Player.playerAnim.SetBool("RunDrop", false); Player.playerAnim.SetBool("StandToSit", false);
         player.plantOnHandPlantPlayer.SetActive(false);
         player.plantOnHandRaddishPlayer.SetActive(false);
         player.plantOnHandBeetRootPlayer.SetActive(false);
-        player.isRun = true;
+        Player.isRun = true;
         player.isTouchActive = true;
-        player.isCoowFoodDrop = false;
-
+        player.plantOnHandPlantPlayer.SetActive(false); Player.isRun = true; player.plantOnHandRaddishPlayer.SetActive(false);
+        player.plantOnHandBeetRootPlayer.SetActive(false); player.plantOnHandTomatoPlayer.SetActive(false); player.plantOnHandLemonPlayer.SetActive(false);
     }
     IEnumerator checkGameManagers()
     {
